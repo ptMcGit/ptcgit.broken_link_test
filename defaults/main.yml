@@ -1,0 +1,5 @@
+---
+# defaults file for ptmcgit.broken_link_test
+
+broken_tree: "/broken"
+broken_link: "{{ broken_tree }}/nowhere"

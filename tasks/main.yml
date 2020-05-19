@@ -1,0 +1,48 @@
+---
+# tasks file for ptmcgit.broken_link_test
+
+
+- name: Create test directory.
+  file:
+    path: "{{ broken_tree }}"
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+  become: yes
+
+- name: Create regular file.
+  copy:
+    dest: "{{ broken_tree }}/regular_file"
+    content: "regular file"
+
+  become: yes
+
+- name: Create regular link.
+  file:
+    state: link
+    src: "{{ broken_tree }}/regular_file"
+    dest: "{{ broken_tree }}/ok_link"
+  become: yes
+
+- name: Create broken link.
+  file:
+    state: link
+    src: "{{ broken_link }}"
+    dest: "{{ broken_tree }}/broken_link"
+    force: yes
+  become: yes
+
+- name: Link to root node.
+  file:
+    state: link
+    src: "{{ broken_tree }}"
+    dest: "{{ broken_tree }}/{{ broken_tree }}"
+  become: yes
+
+- name: Attempt to archive tree with broken link.
+  archive:
+    path: "{{ broken_tree }}"
+    dest: "{{ broken_tree }}.tgz"
+    format: gz
+  become: yes
